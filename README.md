@@ -1,42 +1,74 @@
-# Layout component example
+# Piral Next.js Example
 
-This example shows a very common use case when building websites where you need to repeat some sort of layout for all your pages. Our pages are: `home`, `about` and `contact` and they all share the same `<head>` settings, the `<nav>` and the `<footer>`. Further more, the title (and potentially other head elements) can be sent as a prop to the layout component so that it's customizable in all pages.
+This example shows how an existing application using Next.js could be changed to be a pilet.
 
-## Deploy your own
+The application is still capable of running as a Next.js app, while also being buildable as a pilet.
 
-Deploy the example using [ZEIT Now](https://zeit.co/now):
+**Remark**: This approach is valid for a single Next.js pilet. If you have multiple Next.js applications that you want to run in the same Piral instance then sharing the `next/head` etc. components from the app shell would be recommended.
 
-[![Deploy with ZEIT Now](https://zeit.co/button)](https://zeit.co/import/project?template=https://github.com/zeit/next.js/tree/canary/examples/layout-component)
+## Required Changes
 
-## How to use
+We've installed the `piral-cli` and the respective app shell (in this case `sample-piral`). We've added the necessary fields to the `package.json`.
 
-### Using `create-next-app`
+### `package.json`
 
-Execute [`create-next-app`](https://github.com/zeit/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+Most notably we did add:
 
-```bash
-npm init next-app --example layout-component layout-component-app
-# or
-yarn create next-app --example layout-component layout-component-app
+```json
+  "piral": {
+    "name": "sample-piral",
+    "externals": [
+      "sample-piral",
+      "react",
+      "react-router-dom"
+    ]
+  },
 ```
 
-### Download manually
+To improve the experience even more we've also declared peer dependencies.
 
-Download the example:
-
-```bash
-curl https://codeload.github.com/zeit/next.js/tar.gz/canary | tar -xz --strip=2 next.js-canary/examples/layout-component
-cd layout-component
+```json
+  "peerDependencies": {
+    "react": "*",
+    "react-router-dom": "*",
+    "sample-piral": "*"
+  },
 ```
 
-Install it and run:
+Finally, it makes sense to also add scripts for building the pilet.
 
-```bash
-npm install
-npm run dev
-# or
-yarn
-yarn dev
+```json
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "build-pilet": "pilet build",
+    "debug-pilet": "pilet debug",
+    "start": "next start"
+  },
 ```
 
-Deploy it to the cloud with [ZEIT Now](https://zeit.co/import?filter=next.js&utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+### `src/index.js`
+
+A new `src/index.js` file was added. This one performs all the registrations.
+
+We've also added a tile to link to `/sample` for demonstration purposes.
+
+### Reference React
+
+Every source file did not reference `React` explicitly. This is, however, usually necessary. Potentially, a `.babelrc` could be used for this. In this example we've just added
+
+```js
+import * as React from 'react';
+```
+
+on top of each file.
+
+### React Router
+
+Since the next router is not compatible with the React router I've also made a slight change here. I've added an `alias` field to the `package.json`. This tells Parcel to resolve some package differently. In our case `next/link` will be resolved to `./components/Link.js`. This element will also prefix all used links with "/sample" such that `/contact` would be `/sample/contact`.
+
+```json
+  "alias": {
+    "next/link": "./components/Link.js"
+  },
+```
