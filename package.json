@@ -4,12 +4,36 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
+    "build-pilet": "pilet build",
+    "debug-pilet": "pilet debug",
     "start": "next start"
   },
+  "alias": {
+    "next/link": "./components/Link.js"
+  },
   "dependencies": {
+    "components": "^0.1.0",
     "next": "latest",
     "react": "^16.7.0",
     "react-dom": "^16.7.0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-router-dom": "*",
+    "sample-piral": "*"
+  },
+  "devDependencies": {
+    "piral-cli": "0.10.8",
+    "react-router-dom": "5.1.2",
+    "sample-piral": "0.10.8"
+  },
+  "piral": {
+    "name": "sample-piral",
+    "externals": [
+      "sample-piral",
+      "react",
+      "react-router-dom"
+    ]
   },
   "license": "ISC"
 }
